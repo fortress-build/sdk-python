@@ -112,8 +112,9 @@ class Fortress:
         if response.status_code != 200:
             return DatabaseCreateResponse(
                 success=False,
-                message=json_response.get("message", "An error occured"),
-                databases=[],
+                message=json_response.get(
+                    "message", json_response.get("message", "An error occured")
+                ),
             )
 
         return DatabaseCreateResponse(
