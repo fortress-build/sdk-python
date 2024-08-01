@@ -18,9 +18,6 @@ class CursorInterface:
     def lastrowid(self) -> int | None:
         raise NotImplementedError
 
-    def close(self) -> None:
-        raise NotImplementedError
-
     def execute(self, sql: str, parameters: tuple[Any] = ...) -> "CursorInterface":
         raise NotImplementedError
 
@@ -67,9 +64,6 @@ class ConnectionInterface:
     def executescript(self, script: str) -> None:
         raise NotImplementedError
 
-    def close(self):
-        raise NotImplementedError
-
 
 class DatabaseClient:
     def __init__(self) -> None:
@@ -79,11 +73,3 @@ class DatabaseClient:
     def connect(self) -> ConnectionInterface:
         """Connect return an active connection to the database"""
         raise NotImplementedError
-
-    def close(self) -> None:
-        """Close the connection to the database"""
-        raise NotImplementedError
-
-    def __del__(self):
-        """Close the connection to the database"""
-        self.close()
