@@ -45,13 +45,14 @@ class Fortress:
         org_id: str,
         api_key: str,
     ):
-        # self.base_url = "https://api.fortress.build/v1"
-        self.base_url = "http://localhost:80/api/v1"
+        self.base_url = "https://api.fortress.build"
         self.org_id = org_id
         self.api_key = api_key
 
     def get_uri(self, database):
-        endpoint = f"{self.base_url}/organization/{self.org_id}/{database}/database/uri"
+        endpoint = (
+            f"{self.base_url}/v1/organization/{self.org_id}/{database}/database/uri"
+        )
         response = requests.get(
             endpoint,
             headers={"Api-Key": self.api_key},
@@ -101,7 +102,7 @@ class Fortress:
         )
 
     def create_database(self, database):
-        endpoint = f"{self.base_url}/organization/{self.org_id}/{database}/database"
+        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/{database}/database"
         response = requests.post(
             endpoint,
             headers={"Api-Key": self.api_key},
@@ -121,7 +122,7 @@ class Fortress:
         )
 
     def delete_database(self, database):
-        endpoint = f"{self.base_url}/organization/{self.org_id}/{database}/database"
+        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/{database}/database"
         response = requests.delete(
             endpoint,
             headers={"Api-Key": self.api_key},
@@ -141,7 +142,7 @@ class Fortress:
         )
 
     def list_databases(self):
-        endpoint = f"{self.base_url}/organization/{self.org_id}/databases"
+        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/databases"
         response = requests.get(
             endpoint,
             headers={"Api-Key": self.api_key},

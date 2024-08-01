@@ -7,7 +7,7 @@ Welcome to the Fortress Python SDK. This SDK provides a way for you to leverage 
 You can install the SDK using pip. Simply run the following command:
 
 ```bash
-pip install fortress-platform-sdk
+pip install fortress-sdk-python
 ```
 
 ## Quick Start
@@ -15,7 +15,7 @@ pip install fortress-platform-sdk
 Here is a quick example to get you started with the SDK:
 
 ```python
-from fortress_python_sdk import Client as FortressClient
+from fortress_sdk_python import Client as FortressClient
 
 # Initialize the client with your API key
 client = FortressClient(org_id='your_org_id', api_key='your_api_key')
