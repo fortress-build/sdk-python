@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "fortress-sdk-python"
+version = "0.1.1"
+description = "Fortress Platform Python API SDK"
+authors = ["Fortress <founders@fortress.build>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.32.3"
+cryptography = "^43.0.0"
+libsql-experimental = "^0.0.37"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
