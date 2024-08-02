@@ -38,8 +38,8 @@ class CursorInterface:
 
 class ConnectionInterface:
     def __init__(self, connection):
-        self.__connection: "ConnectionInterface" = ...
-        self.in_transaction: bool = ...
+        self.in_transaction: bool = NotImplementedError
+        self.isolation_level: str = NotImplementedError
 
     def commit(self) -> None:
         raise NotImplementedError

@@ -46,6 +46,7 @@ class LibsqlConnection(ConnectionInterface):
     def __init__(self, connection):
         self.__connection = connection
         self.in_transaction: bool = self.__connection.in_transaction
+        self.isolation_level: str = self.__connection.isolation_level
 
     def commit(self) -> None:
         return self.__connection.commit()
@@ -59,7 +60,7 @@ class LibsqlConnection(ConnectionInterface):
     def rollback(self) -> None:
         return self.__connection.rollback()
 
-    def execute(self, sql: str, parameters: tuple[Any] = ...) -> LibsqlCursor:
+    def execute(self, sql: str, parameters: tuple[Any] = ()) -> LibsqlCursor:
         return self.__connection.execute(sql, parameters)
 
     def executemany(self, sql: str, parameters: list[tuple[Any]] = ...) -> LibsqlCursor:
