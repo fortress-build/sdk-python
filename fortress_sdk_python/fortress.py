@@ -3,7 +3,7 @@ from .client import (
     Tenant,
     Client,
 )
-from .database import ConnectionInterface
+from .database import Connection
 from .postgres import PostgresClient, PostgresConnection
 
 
@@ -19,7 +19,7 @@ class Fortress:
         self.__connection_cache = {}
         self.__tenant_to_database = {}
 
-    def connect_database(self, database_id: str) -> ConnectionInterface:
+    def connect_database(self, database_id: str) -> Connection:
         """Connect to a database on the Fortress platform"""
         if database_id in self.__connection_cache:
             return self.__connection_cache[database_id]
@@ -51,7 +51,7 @@ class Fortress:
         """List all databases on the Fortress platform"""
         return self.__fortress.list_databases()
 
-    def connect_tenant(self, tenant_name: str) -> ConnectionInterface:
+    def connect_tenant(self, tenant_name: str) -> Connection:
         """Connect to a tenant's database on the Fortress platform"""
         if tenant_name in self.__tenant_to_database:
             return self.connect_database(
