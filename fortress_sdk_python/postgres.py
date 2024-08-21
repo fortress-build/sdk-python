@@ -1,13 +1,13 @@
 from .database import (
     DatabaseClient,
-    ConnectionInterface,
-    CursorInterface,
+    Connection,
+    Cursor,
 )
 import psycopg2
 from typing import Any
 
 
-class PostgresCursor(CursorInterface):
+class PostgresCursor(Cursor):
     def __init__(self, cursor):
         self.__cursor = cursor
 
@@ -49,7 +49,7 @@ class PostgresCursor(CursorInterface):
         self.__cursor.__exit__(exc_type, exc_value, traceback)
 
 
-class PostgresConnection(ConnectionInterface):
+class PostgresConnection(Connection):
     def __init__(self, connection: psycopg2.extensions.connection):
         self.__connection = connection
         self.isolation_level: str = self.__connection.isolation_level

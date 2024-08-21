@@ -1,9 +1,9 @@
 from typing import Any
 
 
-class CursorInterface:
+class Cursor:
     def __init__(self, cursor):
-        self.__cursor: "CursorInterface" = NotImplementedError
+        self.__cursor: "Cursor" = NotImplementedError
         self.arraysize: int = NotImplementedError
 
     @property
@@ -18,12 +18,10 @@ class CursorInterface:
     def lastrowid(self) -> int | None:
         raise NotImplementedError
 
-    def execute(self, sql: str, parameters: tuple[Any] = ...) -> "CursorInterface":
+    def execute(self, sql: str, parameters: tuple[Any] = ...) -> "Cursor":
         raise NotImplementedError
 
-    def executemany(
-        self, sql: str, parameters: list[tuple[Any]] = ...
-    ) -> "CursorInterface":
+    def executemany(self, sql: str, parameters: list[tuple[Any]] = ...) -> "Cursor":
         raise NotImplementedError
 
     def fetchone(self) -> tuple[Any] | None:
@@ -35,14 +33,14 @@ class CursorInterface:
     def fetchall(self) -> list[tuple[Any]]:
         raise NotImplementedError
 
-    def __enter__(self) -> "CursorInterface":
+    def __enter__(self) -> "Cursor":
         raise NotImplementedError
 
     def __exit__(self, exc_type, exc_value, traceback):
         raise NotImplementedError
 
 
-class ConnectionInterface:
+class Connection:
     def __init__(self, connection):
         self.in_transaction: bool = NotImplementedError
         self.isolation_level: str = NotImplementedError
@@ -50,7 +48,7 @@ class ConnectionInterface:
     def commit(self) -> None:
         raise NotImplementedError
 
-    def cursor(self) -> CursorInterface:
+    def cursor(self) -> Cursor:
         raise NotImplementedError
 
     def sync(self) -> None:
@@ -59,12 +57,10 @@ class ConnectionInterface:
     def rollback(self) -> None:
         raise NotImplementedError
 
-    def execute(self, sql: str, parameters: tuple[Any] = ...) -> CursorInterface:
+    def execute(self, sql: str, parameters: tuple[Any] = ...) -> Cursor:
         raise NotImplementedError
 
-    def executemany(
-        self, sql: str, parameters: list[tuple[Any]] = ...
-    ) -> CursorInterface:
+    def executemany(self, sql: str, parameters: list[tuple[Any]] = ...) -> Cursor:
         raise NotImplementedError
 
     def executescript(self, script: str) -> None:
@@ -76,6 +72,6 @@ class DatabaseClient:
         """Initialize the Database client"""
         raise NotImplementedError
 
-    def connect(self) -> ConnectionInterface:
+    def connect(self) -> Connection:
         """Connect return an active connection to the database"""
         raise NotImplementedError
