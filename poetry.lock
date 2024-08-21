@@ -235,28 +235,25 @@ files = [
 ]
 
 [[package]]
-name = "libsql-experimental"
-version = "0.0.37"
-description = ""
+name = "psycopg2"
+version = "2.9.9"
+description = "psycopg2 - Python-PostgreSQL Database Adapter"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "libsql_experimental-0.0.37-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:68c59c80255286864e1d026056c3956db244500add9efaa008b00c88bc007c8c"},
-    {file = "libsql_experimental-0.0.37-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:7f37e5aca2b2002afb396b28fa3f4ede91cdaba67d4ad47ce4b8b6efff1a8b12"},
-    {file = "libsql_experimental-0.0.37-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5bda2b4d4bee03e51ed25116d9574d2d07d92d07f797426f35c695efde51a2a7"},
-    {file = "libsql_experimental-0.0.37-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:f5d1d4b0cf070e522524490d3f53991183d8fe359fc8b6fd1e7638db96807516"},
-    {file = "libsql_experimental-0.0.37-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:47e9637999b9b6f1bff32c23936f0f5328d0635239aa4b2332fecd3a6b5e3bc8"},
-    {file = "libsql_experimental-0.0.37-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2740c2fe5bf95ff0da935d4c8c14638e6d42c702c0f8827ce66d211c04feef50"},
-    {file = "libsql_experimental-0.0.37-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:2ee777137c007b3fbdf9539b6a3bb3d28746aceaeab3d5cdea35ff9959e79503"},
-    {file = "libsql_experimental-0.0.37-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ef8b5aba03abe310fc36bf050dc49bf59a2a757d57b1ce2f518a67587d2fe0ea"},
-    {file = "libsql_experimental-0.0.37-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:be8a643c160cf5ac0aad635b4bbcc619763f01883e01d216a13c19217e8123ff"},
-    {file = "libsql_experimental-0.0.37-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3da983735572c5f21dc46947b1fd45daa53710e508ac08f21cc3cc24b67b0923"},
-    {file = "libsql_experimental-0.0.37-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7b9f8441bfbbcc092ec2aa31b1c017e1917703d147522b1d614f689a33d662c2"},
-    {file = "libsql_experimental-0.0.37-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:d9ac9012472b2535642f86cc595ec2efd7c9cdf2fa21eec9168f097c23132301"},
-    {file = "libsql_experimental-0.0.37-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e4eea2560460be33419324fc5a7368fc9971574c22b1391528c60dc46f0713c5"},
-    {file = "libsql_experimental-0.0.37-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:84cd64bbda5ce402591a565f61b2f56fb7722cf093b602f4ecc65f13db38293a"},
-    {file = "libsql_experimental-0.0.37-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:51c1284b25d9c115b0228129839c44bf41df19217925d23ffbcd115620ca0ec9"},
-    {file = "libsql_experimental-0.0.37.tar.gz", hash = "sha256:a84e0bd8c14b5393b2a0cb5a51a76e19f46694a4696040c57e9fba5cb1da4f30"},
+    {file = "psycopg2-2.9.9-cp310-cp310-win32.whl", hash = "sha256:38a8dcc6856f569068b47de286b472b7c473ac7977243593a288ebce0dc89516"},
+    {file = "psycopg2-2.9.9-cp310-cp310-win_amd64.whl", hash = "sha256:426f9f29bde126913a20a96ff8ce7d73fd8a216cfb323b1f04da402d452853c3"},
+    {file = "psycopg2-2.9.9-cp311-cp311-win32.whl", hash = "sha256:ade01303ccf7ae12c356a5e10911c9e1c51136003a9a1d92f7aa9d010fb98372"},
+    {file = "psycopg2-2.9.9-cp311-cp311-win_amd64.whl", hash = "sha256:121081ea2e76729acfb0673ff33755e8703d45e926e416cb59bae3a86c6a4981"},
+    {file = "psycopg2-2.9.9-cp312-cp312-win32.whl", hash = "sha256:d735786acc7dd25815e89cc4ad529a43af779db2e25aa7c626de864127e5a024"},
+    {file = "psycopg2-2.9.9-cp312-cp312-win_amd64.whl", hash = "sha256:a7653d00b732afb6fc597e29c50ad28087dcb4fbfb28e86092277a559ae4e693"},
+    {file = "psycopg2-2.9.9-cp37-cp37m-win32.whl", hash = "sha256:5e0d98cade4f0e0304d7d6f25bbfbc5bd186e07b38eac65379309c4ca3193efa"},
+    {file = "psycopg2-2.9.9-cp37-cp37m-win_amd64.whl", hash = "sha256:7e2dacf8b009a1c1e843b5213a87f7c544b2b042476ed7755be813eaf4e8347a"},
+    {file = "psycopg2-2.9.9-cp38-cp38-win32.whl", hash = "sha256:ff432630e510709564c01dafdbe996cb552e0b9f3f065eb89bdce5bd31fabf4c"},
+    {file = "psycopg2-2.9.9-cp38-cp38-win_amd64.whl", hash = "sha256:bac58c024c9922c23550af2a581998624d6e02350f4ae9c5f0bc642c633a2d5e"},
+    {file = "psycopg2-2.9.9-cp39-cp39-win32.whl", hash = "sha256:c92811b2d4c9b6ea0285942b2e7cac98a59e166d59c588fe5cfe1eda58e72d59"},
+    {file = "psycopg2-2.9.9-cp39-cp39-win_amd64.whl", hash = "sha256:de80739447af31525feddeb8effd640782cf5998e1a4e9192ebdf829717e3913"},
+    {file = "psycopg2-2.9.9.tar.gz", hash = "sha256:d1454bde93fb1e224166811694d600e746430c006fbb031ea06ecc2ea41bf156"},
 ]
 
 [[package]]
@@ -311,4 +308,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "389af6afe5a87c7464e33baaafdbbb7863ff8d7f3bddd931fcdae438527531fa"
+content-hash = "edb1ac68f19901a46ef6d3165a9b749c367195b3765ea97d94c612f35dcaf1bf"

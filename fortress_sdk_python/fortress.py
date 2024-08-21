@@ -1,175 +1,89 @@
-import requests
-from dataclasses import dataclass
-from .crypto import decrypt
-
-
-@dataclass
-class Database:
-    id: str
-    name: str
-    size: int
-    rows_read: int
-    rows_written: int
-
-
-@dataclass
-class DatabaseListResponse:
-    success: bool
-    message: str
-    databases: list[Database]
-
-
-@dataclass
-class DatabaseCreateResponse:
-    success: bool
-    message: str
-
-
-@dataclass
-class DatabaseDeleteResponse:
-    success: bool
-    message: str
-
-
-@dataclass
-class DatabaseUriResponse:
-    success: bool
-    message: str
-    url: str
-    token: str
+from .client import (
+    Database,
+    Tenant,
+    Client,
+)
+from .database import ConnectionInterface
+from .postgres import PostgresClient, PostgresConnection
 
 
 class Fortress:
-    def __init__(
-        self,
-        org_id: str,
-        api_key: str,
-    ):
-        self.base_url = "https://api.fortress.build/api"
-        self.org_id = org_id
-        self.api_key = api_key
+    def __init__(self, org_id: str, api_key: str) -> None:
+        """Initialize the Fortress client"""
+        if not org_id:
+            raise ValueError("Organization ID is required")
+        if not api_key:
+            raise ValueError("API Key is required")
 
-    def get_uri(self, database):
-        endpoint = (
-            f"{self.base_url}/v1/organization/{self.org_id}/{database}/database/uri"
-        )
-        response = requests.get(
-            endpoint,
-            headers={"Api-Key": self.api_key},
-        )
+        self.__fortress = Client(org_id, api_key)
+        self.__connection_cache = {}
+        self.__tenant_to_database = {}
 
-        json_response = response.json()
-        if response.status_code != 200:
-            return DatabaseUriResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-                url="",
-                token="",
-            )
+    def connect_database(self, database_id: str) -> ConnectionInterface:
+        """Connect to a database on the Fortress platform"""
+        if database_id in self.__connection_cache:
+            return self.__connection_cache[database_id]
 
-        url = None
-        token = None
-        try:
-            url = decrypt(
-                private_key=self.api_key,
-                ciphertext=json_response.get("url", ""),
-            )
-            token = decrypt(
-                private_key=self.api_key,
-                ciphertext=json_response.get("token", ""),
-            )
-        except Exception as e:
-            return DatabaseUriResponse(
-                success=False,
-                message=f"An error occured while decrypting the database URI: {str(e)}",
-                url="",
-                token="",
-            )
+        response = self.__fortress.get_uri(database_id, "database")
+        if not response.success:
+            raise ValueError(response.message)
 
-        if url is None or token is None:
-            return DatabaseUriResponse(
-                success=False,
-                message="An error occured",
-                url="",
-                token="",
-            )
-
-        return DatabaseUriResponse(
-            success=True,
-            message=json_response["message"],
-            url=url,
-            token=token,
+        connection = PostgresConnection(
+            response.url,
+            response.port,
+            response.username,
+            response.password,
+            response.database,
         )
 
-    def create_database(self, database):
-        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/{database}/database"
-        response = requests.post(
-            endpoint,
-            headers={"Api-Key": self.api_key},
-        )
+        self.__connection_cache[database_id] = connection
+        return connection
 
-        json_response = response.json()
-        if response.status_code != 200:
-            return DatabaseCreateResponse(
-                success=False,
-                message=json_response.get(
-                    "message", json_response.get("message", "An error occured")
-                ),
+    def create_database(self, alias: str) -> str:
+        """Create a new database on the Fortress platform"""
+        return self.__fortress.create_database(alias=alias)
+
+    def delete_database(self, database_id: str) -> None:
+        """Delete a database on the Fortress platform"""
+        self.__fortress.delete_database(database_id=database_id)
+
+    def list_databases(self) -> list[Database]:
+        """List all databases on the Fortress platform"""
+        return self.__fortress.list_databases()
+
+    def connect_tenant(self, tenant_name: str) -> ConnectionInterface:
+        """Connect to a tenant's database on the Fortress platform"""
+        if tenant_name in self.__tenant_to_database:
+            return self.connect_database(
+                self.__connection_cache[self.__tenant_to_database[tenant_name]]
             )
 
-        return DatabaseCreateResponse(
-            success=True,
-            message=json_response["message"],
+        response = self.__fortress.get_uri(tenant_name, "tenant")
+
+        connection = PostgresClient(
+            response.url,
+            response.port,
+            response.username,
+            response.password,
+            response.database,
+        ).connect()
+
+        self.__tenant_to_database[tenant_name] = response.database_id
+        self.__connection_cache[response.database_id] = connection
+        return connection
+
+    def create_tenant(
+        self, tenant_name: str, alias: str, database_id: str = ""
+    ) -> None:
+        """Create a new tenant on the Fortress platform"""
+        self.__fortress.create_tenant(
+            tenant_name=tenant_name, alias=alias, database_id=database_id
         )
 
-    def delete_database(self, database):
-        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/{database}/database"
-        response = requests.delete(
-            endpoint,
-            headers={"Api-Key": self.api_key},
-        )
+    def delete_tenant(self, tenant_name: str) -> None:
+        """Delete a tenant on the Fortress platform"""
+        self.__fortress.delete_tenant(tenant_name=tenant_name)
 
-        json_response = response.json()
-        if response.status_code != 200:
-            return DatabaseDeleteResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-                databases=[],
-            )
-
-        return DatabaseDeleteResponse(
-            success=True,
-            message=json_response["message"],
-        )
-
-    def list_databases(self):
-        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/databases"
-        response = requests.get(
-            endpoint,
-            headers={"Api-Key": self.api_key},
-        )
-
-        json_response = response.json()
-        if response.status_code != 200:
-            return DatabaseListResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-                databases=[],
-            )
-
-        databases = [
-            Database(
-                id=data.get("id", ""),
-                name=data.get("name", ""),
-                size=data.get("size", 0),
-                rows_read=data.get("rows_read", 0),
-                rows_written=data.get("rows_written", 0),
-            )
-            for data in json_response.get("databases", [])
-        ]
-
-        return DatabaseListResponse(
-            success=True,
-            message="Success",
-            databases=databases,
-        )
+    def list_tenants(self) -> list[Tenant]:
+        """List all tenants on the Fortress platform"""
+        return self.__fortress.list_tenants()
