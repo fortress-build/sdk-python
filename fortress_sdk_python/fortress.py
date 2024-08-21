@@ -1,10 +1,6 @@
 from .client import (
-    DatabaseCreateResponse,
-    DatabaseDeleteResponse,
-    DatabaseListResponse,
-    TenantCreateResponse,
-    TenantDeleteResponse,
-    TenantListResponse,
+    Database,
+    Tenant,
     Client,
 )
 from .database import ConnectionInterface
@@ -43,15 +39,15 @@ class Fortress:
         self.__connection_cache[database_id] = connection
         return connection
 
-    def create_database(self, alias: str) -> DatabaseCreateResponse:
+    def create_database(self, alias: str) -> str:
         """Create a new database on the Fortress platform"""
         return self.__fortress.create_database(alias=alias)
 
-    def delete_database(self, database_id: str) -> DatabaseDeleteResponse:
+    def delete_database(self, database_id: str) -> None:
         """Delete a database on the Fortress platform"""
-        return self.__fortress.delete_database(database_id=database_id)
+        self.__fortress.delete_database(database_id=database_id)
 
-    def list_databases(self) -> DatabaseListResponse:
+    def list_databases(self) -> list[Database]:
         """List all databases on the Fortress platform"""
         return self.__fortress.list_databases()
 
@@ -63,8 +59,6 @@ class Fortress:
             )
 
         response = self.__fortress.get_uri(tenant_name, "tenant")
-        if not response.success:
-            raise ValueError(response.message)
 
         connection = PostgresClient(
             response.url,
@@ -80,16 +74,16 @@ class Fortress:
 
     def create_tenant(
         self, tenant_name: str, alias: str, database_id: str = ""
-    ) -> TenantCreateResponse:
+    ) -> None:
         """Create a new tenant on the Fortress platform"""
-        return self.__fortress.create_tenant(
+        self.__fortress.create_tenant(
             tenant_name=tenant_name, alias=alias, database_id=database_id
         )
 
-    def delete_tenant(self, tenant_name: str) -> TenantDeleteResponse:
+    def delete_tenant(self, tenant_name: str) -> None:
         """Delete a tenant on the Fortress platform"""
-        return self.__fortress.delete_tenant(tenant_name=tenant_name)
+        self.__fortress.delete_tenant(tenant_name=tenant_name)
 
-    def list_tenants(self) -> TenantListResponse:
+    def list_tenants(self) -> list[Tenant]:
         """List all tenants on the Fortress platform"""
         return self.__fortress.list_tenants()

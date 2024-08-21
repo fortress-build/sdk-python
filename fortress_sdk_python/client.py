@@ -24,48 +24,7 @@ class Tenant:
 
 
 @dataclass
-class TenantListResponse:
-    success: bool
-    message: str
-    tenants: list[Tenant]
-
-
-@dataclass
-class TenantCreateResponse:
-    success: bool
-    message: str
-
-
-@dataclass
-class TenantDeleteResponse:
-    success: bool
-    message: str
-
-
-@dataclass
-class DatabaseListResponse:
-    success: bool
-    message: str
-    databases: list[Database]
-
-
-@dataclass
-class DatabaseCreateResponse:
-    success: bool
-    message: str
-    id: str
-
-
-@dataclass
-class DatabaseDeleteResponse:
-    success: bool
-    message: str
-
-
-@dataclass
-class DatabaseUriResponse:
-    success: bool
-    message: str
+class ConnectionDetails:
     database_id: str
     url: str
     database: str
@@ -96,7 +55,7 @@ class Client:
         self.org_id = org_id
         self.api_key = api_key
 
-    def get_uri(self, id: str, type: str) -> DatabaseUriResponse:
+    def get_uri(self, id: str, type: str) -> ConnectionDetails:
         if type != "tenant" and type != "database":
             raise ValidationError("Type must be either 'tenant' or 'database'")
 
@@ -141,9 +100,7 @@ class Client:
         if url == "" or port == 0 or username == "" or password == "" or database == "":
             raise InternalError("An error occured: Invalid connection details")
 
-        return DatabaseUriResponse(
-            success=True,
-            message=json_response["message"],
+        return ConnectionDetails(
             database_id=json_response["databaseId"],
             url=url,
             database=database,
@@ -152,7 +109,7 @@ class Client:
             password=password,
         )
 
-    def create_database(self, alias: str) -> DatabaseCreateResponse:
+    def create_database(self, alias: str) -> str:
         endpoint = f"{self.base_url}/v1/organization/{self.org_id}/database"
         payload = {"alias": alias}
         response = requests.post(
@@ -170,13 +127,9 @@ class Client:
                     json_response.get("message", "Internal Server Error")
                 )
 
-        return DatabaseCreateResponse(
-            success=True,
-            message=json_response["message"],
-            id=json_response["databaseId"],
-        )
+        return json_response["databaseId"]
 
-    def delete_database(self, database_id: str) -> DatabaseDeleteResponse:
+    def delete_database(self, database_id: str):
         endpoint = (
             f"{self.base_url}/v1/organization/{self.org_id}/database/{database_id}"
         )
@@ -194,12 +147,7 @@ class Client:
                     json_response.get("message", "Internal Server Error")
                 )
 
-        return DatabaseDeleteResponse(
-            success=True,
-            message=json_response["message"],
-        )
-
-    def list_databases(self) -> DatabaseListResponse:
+    def list_databases(self) -> list[Database]:
         endpoint = f"{self.base_url}/v1/organization/{self.org_id}/databases"
         response = requests.get(
             endpoint,
@@ -229,15 +177,11 @@ class Client:
             for data in json_response.get("databases", [])
         ]
 
-        return DatabaseListResponse(
-            success=True,
-            message=json_response.get("message", "An error occured"),
-            databases=databases,
-        )
+        return databases
 
     def create_tenant(
         self, tenant_name: str, alias: str, database_id: str = ""
-    ) -> TenantCreateResponse:
+    ) -> None:
         endpoint = f"{self.base_url}/v1/organization/{self.org_id}/tenant/{tenant_name}"
         payload = {"alias": alias}
         if database_id:
@@ -258,12 +202,7 @@ class Client:
                     json_response.get("message", "Internal Server Error")
                 )
 
-        return TenantCreateResponse(
-            success=True,
-            message=json_response["message"],
-        )
-
-    def delete_tenant(self, tenant_name: str) -> TenantDeleteResponse:
+    def delete_tenant(self, tenant_name: str) -> None:
         endpoint = f"{self.base_url}/v1/organization/{self.org_id}/tenant/{tenant_name}"
         response = requests.delete(
             endpoint,
@@ -279,12 +218,7 @@ class Client:
                     json_response.get("message", "Internal Server Error")
                 )
 
-        return TenantDeleteResponse(
-            success=True,
-            message=json_response["message"],
-        )
-
-    def list_tenants(self) -> TenantListResponse:
+    def list_tenants(self) -> list[Tenant]:
         endpoint = f"{self.base_url}/v1/organization/{self.org_id}/tenants"
         response = requests.get(
             endpoint,
@@ -312,8 +246,4 @@ class Client:
             for data in json_response.get("tenants", [])
         ]
 
-        return TenantListResponse(
-            success=True,
-            message=json_response.get("message", "An error occured"),
-            tenants=tenants,
-        )
+        return tenants
