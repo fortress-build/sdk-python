@@ -35,6 +35,12 @@ class CursorInterface:
     def fetchall(self) -> list[tuple[Any]]:
         raise NotImplementedError
 
+    def __enter__(self) -> "CursorInterface":
+        raise NotImplementedError
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        raise NotImplementedError
+
 
 class ConnectionInterface:
     def __init__(self, connection):
