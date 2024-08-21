@@ -16,7 +16,7 @@ except Exception as e:
 # Create a tenant (if you do not provide a database_id, a new database will be created)
 try:
     fortress.create_tenant(
-        tenant_name="client1",
+        tenant_id="client1",
         alias="Client 1",
         database_id=database_id,
     )
