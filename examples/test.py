@@ -1,9 +1,9 @@
-from fortress_sdk_python import Client
+from fortress_sdk_python import Fortress
 
 # Initialize the Fortress client
-fortress = Client(
-    org_id="",
-    api_key="",
+fortress = Fortress(
+    org_id="orgId",
+    api_key="apiKey",
 )
 
 # Create a database
