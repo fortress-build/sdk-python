@@ -74,6 +74,18 @@ class DatabaseUriResponse:
     password: str
 
 
+class InternalError(Exception):
+    def __init__(self, message="Internal Server Error"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class ValidationError(Exception):
+    def __init__(self, message="Validation Error"):
+        self.message = message
+        super().__init__(self.message)
+
+
 class Client:
     def __init__(
         self,
@@ -86,16 +98,7 @@ class Client:
 
     def get_uri(self, id: str, type: str) -> DatabaseUriResponse:
         if type != "tenant" and type != "database":
-            return DatabaseUriResponse(
-                success=False,
-                message="Invalid type",
-                database_id="",
-                url="",
-                database="",
-                port=0,
-                username="",
-                password="",
-            )
+            raise ValidationError("Type must be either 'tenant' or 'database'")
 
         endpoint = f"{self.base_url}/v1/organization/{self.org_id}/{type}/{id}/uri"
         response = requests.get(
@@ -105,16 +108,12 @@ class Client:
 
         json_response = response.json()
         if response.status_code != 200:
-            return DatabaseUriResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-                database_id="",
-                url="",
-                database="",
-                port=0,
-                username="",
-                password="",
-            )
+            if response.status_code == 400:
+                raise ValidationError(json_response.get("message", "Validation Error"))
+            if response.status_code == 500:
+                raise InternalError(
+                    json_response.get("message", "Internal Server Error")
+                )
 
         connection_details_str = None
         try:
@@ -123,27 +122,13 @@ class Client:
                 ciphertext=json_response.get("connectionDetails", ""),
             )
         except Exception as e:
-            return DatabaseUriResponse(
-                success=False,
-                message=f"An error occured while decrypting the database URI: {str(e)}",
-                database_id="",
-                url="",
-                database="",
-                port=0,
-                username="",
-                password="",
+            raise InternalError(
+                "An error occured: Unable to decrypt connection details"
             )
 
         if connection_details_str is None:
-            return DatabaseUriResponse(
-                success=False,
-                message="An error occured",
-                database_id="",
-                url="",
-                database="",
-                port=0,
-                username="",
-                password="",
+            raise InternalError(
+                "An error occured: Unable to decrypt connection details"
             )
 
         connection_details = json.loads(connection_details_str)
@@ -154,16 +139,7 @@ class Client:
         password = connection_details.get("password", "")
 
         if url == "" or port == 0 or username == "" or password == "" or database == "":
-            return DatabaseUriResponse(
-                success=False,
-                message="An error occured",
-                database_id="",
-                url="",
-                database="",
-                port=0,
-                username="",
-                password="",
-            )
+            raise InternalError("An error occured: Invalid connection details")
 
         return DatabaseUriResponse(
             success=True,
@@ -187,11 +163,12 @@ class Client:
 
         json_response = response.json()
         if response.status_code != 200:
-            return DatabaseCreateResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-                id=json_response.get("databaseId", ""),
-            )
+            if response.status_code == 400:
+                raise ValidationError(json_response.get("message", "Validation Error"))
+            if response.status_code == 500:
+                raise InternalError(
+                    json_response.get("message", "Internal Server Error")
+                )
 
         return DatabaseCreateResponse(
             success=True,
@@ -210,10 +187,12 @@ class Client:
 
         json_response = response.json()
         if response.status_code != 200:
-            return DatabaseDeleteResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-            )
+            if response.status_code == 400:
+                raise ValidationError(json_response.get("message", "Validation Error"))
+            if response.status_code == 500:
+                raise InternalError(
+                    json_response.get("message", "Internal Server Error")
+                )
 
         return DatabaseDeleteResponse(
             success=True,
@@ -229,11 +208,12 @@ class Client:
 
         json_response = response.json()
         if response.status_code != 200:
-            return DatabaseListResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-                databases=[],
-            )
+            if response.status_code == 400:
+                raise ValidationError(json_response.get("message", "Validation Error"))
+            else:
+                raise InternalError(
+                    json_response.get("message", "Internal Server Error")
+                )
 
         databases = [
             Database(
@@ -271,12 +251,12 @@ class Client:
 
         json_response = response.json()
         if response.status_code != 200:
-            return TenantCreateResponse(
-                success=False,
-                message=json_response.get(
-                    "message", json_response.get("message", "An error occured")
-                ),
-            )
+            if response.status_code == 400:
+                raise ValidationError(json_response.get("message", "Validation Error"))
+            if response.status_code == 500:
+                raise InternalError(
+                    json_response.get("message", "Internal Server Error")
+                )
 
         return TenantCreateResponse(
             success=True,
@@ -292,10 +272,12 @@ class Client:
 
         json_response = response.json()
         if response.status_code != 200:
-            return TenantDeleteResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-            )
+            if response.status_code == 400:
+                raise ValidationError(json_response.get("message", "Validation Error"))
+            if response.status_code == 500:
+                raise InternalError(
+                    json_response.get("message", "Internal Server Error")
+                )
 
         return TenantDeleteResponse(
             success=True,
@@ -311,11 +293,12 @@ class Client:
 
         json_response = response.json()
         if response.status_code != 200:
-            return TenantListResponse(
-                success=False,
-                message=json_response.get("message", "An error occured"),
-                tenants=[],
-            )
+            if response.status_code == 400:
+                raise ValidationError(json_response.get("message", "Validation Error"))
+            else:
+                raise InternalError(
+                    json_response.get("message", "Internal Server Error")
+                )
 
         tenants = [
             Tenant(
