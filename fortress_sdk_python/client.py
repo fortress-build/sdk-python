@@ -12,15 +12,15 @@ class Database:
     size: int
     average_read_iops: int
     average_write_iops: int
-    date_created: datetime.datetime
+    created_date: datetime.datetime
 
 
 @dataclass
 class Tenant:
-    name: str
+    id: str
     alias: str
     database_id: str
-    date_created: datetime.datetime
+    created_date: datetime.datetime
 
 
 @dataclass
@@ -109,7 +109,7 @@ class Client:
             password=password,
         )
 
-    def create_database(self, alias: str) -> str:
+    def create_database(self, alias: str = "") -> str:
         endpoint = f"{self.base_url}/v1/organization/{self.org_id}/database"
         payload = {"alias": alias}
         response = requests.post(
@@ -170,7 +170,7 @@ class Client:
                 size=data.get("sizeBytes", 0),
                 average_read_iops=data.get("averageReadIOPS", 0),
                 average_write_iops=data.get("averageWriteIOPS", 0),
-                date_created=datetime.datetime.fromisoformat(
+                created_date=datetime.datetime.fromisoformat(
                     data.get("createdDate", "")
                 ),
             )
@@ -180,9 +180,9 @@ class Client:
         return databases
 
     def create_tenant(
-        self, tenant_name: str, alias: str, database_id: str = ""
+        self, tenant_id: str, alias: str = "", database_id: str = ""
     ) -> None:
-        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/tenant/{tenant_name}"
+        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/tenant/{tenant_id}"
         payload = {"alias": alias}
         if database_id:
             payload["databaseId"] = database_id
@@ -202,8 +202,8 @@ class Client:
                     json_response.get("message", "Internal Server Error")
                 )
 
-    def delete_tenant(self, tenant_name: str) -> None:
-        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/tenant/{tenant_name}"
+    def delete_tenant(self, tenant_id: str) -> None:
+        endpoint = f"{self.base_url}/v1/organization/{self.org_id}/tenant/{tenant_id}"
         response = requests.delete(
             endpoint,
             headers={"Api-Key": self.api_key},
@@ -236,10 +236,10 @@ class Client:
 
         tenants = [
             Tenant(
-                name=data.get("tenantName", ""),
+                name=data.get("tenantId", ""),
                 alias=data.get("alias", ""),
                 database_id=data.get("databaseId", ""),
-                date_created=datetime.datetime.fromisoformat(
+                created_date=datetime.datetime.fromisoformat(
                     data.get("createdDate", "")
                 ),
             )

@@ -27,7 +27,7 @@ except Exception as e:
 try:
     databases = fortress.list_databases()
     for database in databases:
-        print(database.id, database.alias, database.date_created)
+        print(database.id, database.alias, database.created_date)
 except Exception as e:
     print(f"Database listing failed: {e}")
 
@@ -35,7 +35,7 @@ except Exception as e:
 try:
     tenants = fortress.list_tenants()
     for tenant in tenants:
-        print(tenant.name, tenant.alias, tenant.database_id, tenant.date_created)
+        print(tenant.id, tenant.alias, tenant.database_id, tenant.created_date)
 except Exception as e:
     print(f"Tenant listing failed: {e}")
 

@@ -39,7 +39,7 @@ class Fortress:
         self.__connection_cache[database_id] = connection
         return connection
 
-    def create_database(self, alias: str) -> str:
+    def create_database(self, alias: str = "") -> str:
         """Create a new database on the Fortress platform"""
         return self.__fortress.create_database(alias=alias)
 
@@ -73,16 +73,16 @@ class Fortress:
         return connection
 
     def create_tenant(
-        self, tenant_name: str, alias: str, database_id: str = ""
+        self, tenant_name: str, alias: str = "", database_id: str = ""
     ) -> None:
         """Create a new tenant on the Fortress platform"""
         self.__fortress.create_tenant(
-            tenant_name=tenant_name, alias=alias, database_id=database_id
+            tenant_id=tenant_name, alias=alias, database_id=database_id
         )
 
     def delete_tenant(self, tenant_name: str) -> None:
         """Delete a tenant on the Fortress platform"""
-        self.__fortress.delete_tenant(tenant_name=tenant_name)
+        self.__fortress.delete_tenant(tenant_id=tenant_name)
 
     def list_tenants(self) -> list[Tenant]:
         """List all tenants on the Fortress platform"""
