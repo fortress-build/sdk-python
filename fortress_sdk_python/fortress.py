@@ -30,8 +30,6 @@ class Fortress:
             return self.__connection_cache[database_id]
 
         response = self.__fortress.get_uri(database_id, "database")
-        if not response.success:
-            raise ValueError(response.message)
 
         connection = PostgresConnection(
             response.url,
