@@ -37,7 +37,7 @@ class Fortress:
             response.username,
             response.password,
             response.database,
-        )
+        ).connect()
 
         self.__connection_cache[database_id] = connection
         return connection
