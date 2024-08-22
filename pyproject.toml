@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fortress-sdk-python"
-version = "0.1.10"
+version = "0.1.12"
 description = "Fortress Platform Python API SDK"
 authors = ["Fortress <founders@fortress.build>"]
 readme = "README.md"

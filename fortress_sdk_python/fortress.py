@@ -31,7 +31,7 @@ class Fortress:
 
         response = self.__fortress.get_uri(database_id, "database")
 
-        connection = PostgresConnection(
+        connection = PostgresClient(
             response.url,
             response.port,
             response.username,
