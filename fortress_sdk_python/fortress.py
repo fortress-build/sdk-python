@@ -12,49 +12,27 @@ class Fortress:
         self,
         org_id: str,
         api_key: str,
-        base_url: str = 'https://api.fortress.build',
+        base_url: str = "https://api.fortress.build",
     ) -> None:
         """Initialize the Fortress client"""
         if not org_id:
-            raise ValueError('Organization ID is required')
+            raise ValueError("Organization ID is required")
         if not api_key:
-            raise ValueError('API Key is required')
+            raise ValueError("API Key is required")
 
         self.__fortress = Client(org_id, api_key, base_url)
         self.__connection_cache = {}
         self.__tenant_to_database = {}
 
-    def connect_database(self, database_id: str) -> Connection:
-        """
-        Connect to a database on the Fortress platform
-
-        :param database_id: ID of the database
-        :return: Connection object to the database
-        """
-        if database_id in self.__connection_cache:
-            return self.__connection_cache[database_id]
-
-        response = self.__fortress.get_uri(database_id, 'database')
-
-        connection = PostgresClient(
-            response.url,
-            response.port,
-            response.username,
-            response.password,
-            response.database,
-        ).connect()
-
-        self.__connection_cache[database_id] = connection
-        return connection
-
-    def create_database(self, alias: str = '') -> str:
+    def create_database(self, platform: str, alias: str = "") -> str:
         """
         Create a new database on the Fortress platform
         Returns the ID of the created
 
+        :param platform: The cloud platform the database will be hosted on (aws or managed)
         :param alias: Alias for the database (optional)
         """
-        return self.__fortress.create_database(alias=alias)
+        return self.__fortress.create_database(platform=platform, alias=alias)
 
     def delete_database(self, database_id: str) -> None:
         """
@@ -84,7 +62,7 @@ class Fortress:
                 self.__connection_cache[self.__tenant_to_database[tenant_id]]
             )
 
-        response = self.__fortress.get_uri(tenant_id, 'tenant')
+        response = self.__fortress.get_uri(tenant_id, "tenant")
 
         connection = PostgresClient(
             response.url,
@@ -99,17 +77,28 @@ class Fortress:
         return connection
 
     def create_tenant(
-        self, tenant_id: str, alias: str = '', database_id: str = ''
+        self,
+        tenant_id: str,
+        isolation_level: str,
+        platform: str,
+        alias: str = "",
+        database_id: str = "",
     ) -> None:
         """
         Create a new tenant on the Fortress platform
 
         :param tenant_id: ID of the tenant
+        :param isolation_level: Isolation level of the tenant (shared or dedicated)
+        :param platform: The cloud platform the tenant will be hosted on (aws or managed)
         :param alias: Alias for the tenant (optional)
         :param database_id: ID of the database to assign the tenant to or if not provided a database will be created (optional)
         """
         self.__fortress.create_tenant(
-            tenant_id=tenant_id, alias=alias, database_id=database_id
+            tenant_id=tenant_id,
+            isolation_level=isolation_level,
+            platform=platform,
+            alias=alias,
+            database_id=database_id,
         )
 
     def delete_tenant(self, tenant_id: str) -> None:

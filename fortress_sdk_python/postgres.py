@@ -91,6 +91,6 @@ class PostgresClient(DatabaseClient):
     def connect(self) -> PostgresConnection:
         return PostgresConnection(
             psycopg2.connect(
-                f"dbname={self.__database_name} user={self.__user} password={self.__password} host={self.__host} port={self.__port} sslmode=disable"
+                f"dbname={self.__database_name} user={self.__user} password={self.__password} host={self.__host} port={self.__port} sslmode=require"
             )
         )

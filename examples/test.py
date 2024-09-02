@@ -9,7 +9,10 @@ fortress = Fortress(
 # Create a database
 database_id = None
 try:
-    database_id = fortress.create_database(alias="Client 1")
+    database_id = fortress.create_database(
+        platform="aws",
+        alias="Client 1",
+    )
 except Exception as e:
     print(f"Database creation failed: {e}")
 
@@ -17,6 +20,8 @@ except Exception as e:
 try:
     fortress.create_tenant(
         tenant_id="client1",
+        isolation_level="dedicated",
+        platform="aws",
         alias="Client 1",
         database_id=database_id,
     )

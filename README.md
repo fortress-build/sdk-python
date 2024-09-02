@@ -41,14 +41,13 @@ Below is a list of the available functionality in the SDK. Using the SDK you can
 
 Database Management:
 
-- `create_database(database_name: str, alias: str)`: Creates a new database.
+- `create_database(platform: str, alias: str)`: Creates a new database.
 - `delete_database(database_name: str)`: Deletes to a database.
 - `list_databases()`: Lists all databases.
-- `connect_database(database_id: str)`: Connects to a database and turns into SQL connection.
 
 Tenant Management:
 
-- `create_tenant(tenant_name: str, alias: str, database_id: str = "")`: Creates a new tenant.
+- `create_tenant(tenant_name: str, isolation_level: str, platform: str, alias: str, database_id: str = "")`: Creates a new tenant.
 - `delete_tenant(tenant_name: str)`: Deletes a tenant.
 - `list_tenants()`: Lists all tenants.
 - `connect_tenant(tenant_name: str)`: Connects to a tenant and turns into SQL connection.
