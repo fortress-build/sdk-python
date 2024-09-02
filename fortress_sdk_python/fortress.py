@@ -21,8 +21,7 @@ class Fortress:
             raise ValueError("API Key is required")
 
         self.__fortress = Client(org_id, api_key, base_url)
-        self.__connection_cache = {}
-        self.__tenant_to_database = {}
+        self.__tenant_connection_cache = {}
 
     def create_database(self, platform: str, alias: str = "") -> str:
         """
@@ -57,10 +56,8 @@ class Fortress:
         :param tenant_id: ID of the tenant
         :return: Connection object to the tenant's database
         """
-        if tenant_id in self.__tenant_to_database:
-            return self.connect_database(
-                self.__connection_cache[self.__tenant_to_database[tenant_id]]
-            )
+        if tenant_id in self.__tenant_connection_cache:
+            return self.__tenant_connection_cache[tenant_id]
 
         response = self.__fortress.get_uri(tenant_id, "tenant")
 
@@ -72,8 +69,7 @@ class Fortress:
             response.database,
         ).connect()
 
-        self.__tenant_to_database[tenant_id] = response.database_id
-        self.__connection_cache[response.database_id] = connection
+        self.__tenant_connection_cache[tenant_id] = connection
         return connection
 
     def create_tenant(
